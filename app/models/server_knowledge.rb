@@ -1,0 +1,2 @@
+class ServerKnowledge < ApplicationRecord
+end

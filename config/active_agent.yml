@@ -1,0 +1,7 @@
+development:
+  openai:
+    service: "OpenAI"
+    api_key: "ollama" # Ollama does not require a real API key
+    model: "llama3.1:8b"
+    base_url: "http://localhost:11434"
+    temperature: 0.0 # Set to 0 for deterministic financial operations

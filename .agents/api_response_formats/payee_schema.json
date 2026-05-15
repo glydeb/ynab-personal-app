@@ -1,0 +1,44 @@
+{
+  "required": [
+    "data"
+  ],
+  "type": "object",
+  "properties": {
+    "data": {
+      "required": [
+        "payee"
+      ],
+      "type": "object",
+      "properties": {
+        "payee": {
+          "required": [
+            "deleted",
+            "id",
+            "name"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string"
+            },
+            "transfer_account_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "If a transfer payee, the `account_id` to which this payee transfers to"
+            },
+            "deleted": {
+              "type": "boolean",
+              "description": "Whether or not the payee has been deleted.  Deleted payees will only be included in delta requests."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2 @@
+class Subtransaction < ApplicationRecord
+end
