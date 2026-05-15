@@ -1,0 +1,63 @@
+{
+  "required": [
+    "data"
+  ],
+  "type": "object",
+  "properties": {
+    "data": {
+      "required": [
+        "money_movement_groups",
+        "server_knowledge"
+      ],
+      "type": "object",
+      "properties": {
+        "money_movement_groups": {
+          "type": "array",
+          "items": {
+            "required": [
+              "id",
+              "group_created_at",
+              "month"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "group_created_at": {
+                "type": "string",
+                "description": "When the money movement group was created",
+                "format": "date-time"
+              },
+              "month": {
+                "type": "string",
+                "description": "The month of the money movement group in ISO format (e.g. 2024-01-01)",
+                "format": "date"
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "performed_by_user_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The id of the user who performed the money movement group",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "server_knowledge": {
+          "type": "integer",
+          "description": "The knowledge of the server",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

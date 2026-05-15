@@ -1,0 +1,43 @@
+{
+  "data": {
+    "category": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "category_group_id": "123e4567-e89b-12d3-a456-426614174000",
+      "category_group_name": "string",
+      "name": "string",
+      "hidden": true,
+      "original_category_group_id": null,
+      "note": null,
+      "budgeted": 1,
+      "activity": 1,
+      "balance": 1,
+      "goal_type": "TB",
+      "goal_needs_whole_amount": null,
+      "goal_day": null,
+      "goal_cadence": null,
+      "goal_cadence_frequency": null,
+      "goal_creation_month": null,
+      "goal_target": null,
+      "goal_target_month": null,
+      "goal_target_date": null,
+      "goal_percentage_complete": null,
+      "goal_months_to_budget": null,
+      "goal_under_funded": null,
+      "goal_overall_funded": null,
+      "goal_overall_left": null,
+      "goal_snoozed_at": null,
+      "deleted": true,
+      "balance_formatted": "string",
+      "balance_currency": 1,
+      "activity_formatted": "string",
+      "activity_currency": 1,
+      "budgeted_formatted": "string",
+      "budgeted_currency": 1,
+      "goal_target_formatted": null,
+      "goal_target_currency": null,
+      "goal_under_funded_formatted": null,
+      "goal_under_funded_currency": null,
+      "...": "[Additional Properties Truncated]"
+    }
+  }
+}

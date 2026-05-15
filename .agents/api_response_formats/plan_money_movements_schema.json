@@ -1,0 +1,115 @@
+{
+  "required": [
+    "data"
+  ],
+  "type": "object",
+  "properties": {
+    "data": {
+      "required": [
+        "money_movements",
+        "server_knowledge"
+      ],
+      "type": "object",
+      "properties": {
+        "money_movements": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "required": [
+                  "id",
+                  "amount"
+                ],
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "month": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The month of the money movement in ISO format (e.g. 2024-01-01)",
+                    "format": "date"
+                  },
+                  "moved_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The date/time the money movement was processed on the server in ISO format (e.g. 2024-01-01T12:00:00Z)",
+                    "format": "date-time"
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "money_movement_group_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The id of the money movement group this movement belongs to",
+                    "format": "uuid"
+                  },
+                  "performed_by_user_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The id of the user who performed the money movement",
+                    "format": "uuid"
+                  },
+                  "from_category_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The id of the category the money was moved from",
+                    "format": "uuid"
+                  },
+                  "to_category_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The id of the category the money was moved to",
+                    "format": "uuid"
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "description": "The amount of the money movement in milliunits format",
+                    "format": "int64"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "amount_formatted": {
+                    "type": "string",
+                    "description": "The money movement amount formatted in the plan's currency format"
+                  },
+                  "amount_currency": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The money movement amount as a decimal currency amount"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "server_knowledge": {
+          "type": "integer",
+          "description": "The knowledge of the server",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

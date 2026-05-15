@@ -1,0 +1,190 @@
+{
+  "required": [
+    "data"
+  ],
+  "type": "object",
+  "properties": {
+    "data": {
+      "required": [
+        "account"
+      ],
+      "type": "object",
+      "properties": {
+        "account": {
+          "allOf": [
+            {
+              "required": [
+                "balance",
+                "cleared_balance",
+                "closed",
+                "deleted",
+                "id",
+                "name",
+                "on_budget",
+                "transfer_payee_id",
+                "type",
+                "uncleared_balance"
+              ],
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "The type of account",
+                  "enum": [
+                    "checking",
+                    "savings",
+                    "cash",
+                    "creditCard",
+                    "lineOfCredit",
+                    "otherAsset",
+                    "otherLiability",
+                    "mortgage",
+                    "autoLoan",
+                    "studentLoan",
+                    "personalLoan",
+                    "medicalDebt",
+                    "otherDebt"
+                  ]
+                },
+                "on_budget": {
+                  "type": "boolean",
+                  "description": "Whether this account is \"on budget\" or not"
+                },
+                "closed": {
+                  "type": "boolean",
+                  "description": "Whether this account is closed or not"
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "balance": {
+                  "type": "integer",
+                  "description": "The current available balance of the account in milliunits format",
+                  "format": "int64"
+                },
+                "cleared_balance": {
+                  "type": "integer",
+                  "description": "The current cleared balance of the account in milliunits format",
+                  "format": "int64"
+                },
+                "uncleared_balance": {
+                  "type": "integer",
+                  "description": "The current uncleared balance of the account in milliunits format",
+                  "format": "int64"
+                },
+                "transfer_payee_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The payee id which should be used when transferring to this account",
+                  "format": "uuid"
+                },
+                "direct_import_linked": {
+                  "type": "boolean",
+                  "description": "Whether or not the account is linked to a financial institution for automatic transaction import."
+                },
+                "direct_import_in_error": {
+                  "type": "boolean",
+                  "description": "If an account linked to a financial institution (direct_import_linked=true) and the linked connection is not in a healthy state, this will be true."
+                },
+                "last_reconciled_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "A date/time specifying when the account was last reconciled.",
+                  "format": "date-time"
+                },
+                "debt_original_balance": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "This field is deprecated and will always be null.",
+                  "format": "int64"
+                },
+                "debt_interest_rates": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                },
+                "debt_minimum_payments": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                },
+                "debt_escrow_amounts": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                },
+                "deleted": {
+                  "type": "boolean",
+                  "description": "Whether or not the account has been deleted.  Deleted accounts will only be included in delta requests."
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "balance_formatted": {
+                  "type": "string",
+                  "description": "The current available balance of the account formatted in the plan's currency format"
+                },
+                "balance_currency": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The current available balance of the account as a decimal currency amount"
+                },
+                "cleared_balance_formatted": {
+                  "type": "string",
+                  "description": "The current cleared balance of the account formatted in the plan's currency format"
+                },
+                "cleared_balance_currency": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The current cleared balance of the account as a decimal currency amount"
+                },
+                "uncleared_balance_formatted": {
+                  "type": "string",
+                  "description": "The current uncleared balance of the account formatted in the plan's currency format"
+                },
+                "uncleared_balance_currency": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The current uncleared balance of the account as a decimal currency amount"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

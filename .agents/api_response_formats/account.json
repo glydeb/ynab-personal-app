@@ -1,0 +1,30 @@
+{
+  "data": {
+    "account": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "string",
+      "type": "checking",
+      "on_budget": true,
+      "closed": true,
+      "note": null,
+      "balance": 1,
+      "cleared_balance": 1,
+      "uncleared_balance": 1,
+      "transfer_payee_id": null,
+      "direct_import_linked": true,
+      "direct_import_in_error": true,
+      "last_reconciled_at": null,
+      "debt_original_balance": null,
+      "debt_interest_rates": null,
+      "debt_minimum_payments": null,
+      "debt_escrow_amounts": null,
+      "deleted": true,
+      "balance_formatted": "string",
+      "balance_currency": 1,
+      "cleared_balance_formatted": "string",
+      "cleared_balance_currency": 1,
+      "uncleared_balance_formatted": "string",
+      "uncleared_balance_currency": 1
+    }
+  }
+}

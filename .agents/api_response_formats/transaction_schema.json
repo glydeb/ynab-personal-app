@@ -1,0 +1,317 @@
+{
+  "required": [
+    "data"
+  ],
+  "type": "object",
+  "properties": {
+    "data": {
+      "required": [
+        "transaction",
+        "server_knowledge"
+      ],
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "required": [
+                    "account_id",
+                    "amount",
+                    "approved",
+                    "cleared",
+                    "date",
+                    "deleted",
+                    "id"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string",
+                      "description": "The transaction date in ISO format (e.g. 2016-12-01)",
+                      "format": "date"
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "description": "The transaction amount in milliunits format",
+                      "format": "int64"
+                    },
+                    "memo": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cleared": {
+                      "type": "string",
+                      "description": "The cleared status of the transaction",
+                      "enum": [
+                        "cleared",
+                        "uncleared",
+                        "reconciled"
+                      ]
+                    },
+                    "approved": {
+                      "type": "boolean",
+                      "description": "Whether or not the transaction is approved"
+                    },
+                    "flag_color": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The transaction flag",
+                      "enum": [
+                        "red",
+                        "orange",
+                        "yellow",
+                        "green",
+                        "blue",
+                        "purple",
+                        "",
+                        null
+                      ]
+                    },
+                    "flag_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The customized name of a transaction flag"
+                    },
+                    "account_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "payee_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "uuid"
+                    },
+                    "category_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "uuid"
+                    },
+                    "transfer_account_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "If a transfer transaction, the account to which it transfers",
+                      "format": "uuid"
+                    },
+                    "transfer_transaction_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "If a transfer transaction, the id of transaction on the other side of the transfer"
+                    },
+                    "matched_transaction_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "If transaction is matched, the id of the matched transaction"
+                    },
+                    "import_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "If the transaction was imported, this field is a unique (by account) import identifier.  If this transaction was imported through File Based Import or Direct Import and not through the API, the import_id will have the format: 'YNAB:[milliunit_amount]:[iso_date]:[occurrence]'.  For example, a transaction dated 2015-12-30 in the amount of -$294.23 USD would have an import_id of 'YNAB:-294230:2015-12-30:1'.  If a second transaction on the same account was imported and had the same date and same amount, its import_id would be 'YNAB:-294230:2015-12-30:2'."
+                    },
+                    "import_payee_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "If the transaction was imported, the payee name that was used when importing and before applying any payee rename rules"
+                    },
+                    "import_payee_name_original": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "If the transaction was imported, the original payee name as it appeared on the statement"
+                    },
+                    "debt_transaction_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "If the transaction is a debt/loan account transaction, the type of transaction",
+                      "enum": [
+                        "payment",
+                        "refund",
+                        "fee",
+                        "interest",
+                        "escrow",
+                        "balanceAdjustment",
+                        "credit",
+                        "charge",
+                        null
+                      ]
+                    },
+                    "deleted": {
+                      "type": "boolean",
+                      "description": "Whether or not the transaction has been deleted.  Deleted transactions will only be included in delta requests."
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "amount_formatted": {
+                      "type": "string",
+                      "description": "The transaction amount formatted in the plan's currency format"
+                    },
+                    "amount_currency": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The transaction amount as a decimal currency amount"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "required": [
+                "account_name",
+                "subtransactions"
+              ],
+              "type": "object",
+              "properties": {
+                "account_name": {
+                  "type": "string"
+                },
+                "payee_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "category_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The name of the category.  If a split transaction, this will be 'Split'."
+                },
+                "subtransactions": {
+                  "type": "array",
+                  "description": "If a split transaction, the subtransactions.",
+                  "items": {
+                    "allOf": [
+                      {
+                        "required": [
+                          "amount",
+                          "deleted",
+                          "id",
+                          "transaction_id"
+                        ],
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "transaction_id": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "integer",
+                            "description": "The subtransaction amount in milliunits format",
+                            "format": "int64"
+                          },
+                          "memo": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "payee_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "uuid"
+                          },
+                          "payee_name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "category_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "uuid"
+                          },
+                          "category_name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "transfer_account_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "If a transfer, the account_id which the subtransaction transfers to",
+                            "format": "uuid"
+                          },
+                          "transfer_transaction_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "If a transfer, the id of transaction on the other side of the transfer"
+                          },
+                          "deleted": {
+                            "type": "boolean",
+                            "description": "Whether or not the subtransaction has been deleted.  Deleted subtransactions will only be included in delta requests."
+                          }
+                        }
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "amount_formatted": {
+                            "type": "string",
+                            "description": "The subtransaction amount formatted in the plan's currency format"
+                          },
+                          "amount_currency": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "The subtransaction amount as a decimal currency amount"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "server_knowledge": {
+          "type": "integer",
+          "description": "The knowledge of the server",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

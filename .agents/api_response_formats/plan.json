@@ -1,0 +1,166 @@
+{
+  "data": {
+    "plan": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "string",
+      "last_modified_on": "2026-05-15T19:18:03.908Z",
+      "first_month": "2026-05-15",
+      "last_month": "2026-05-15",
+      "date_format": {
+        "format": "string"
+      },
+      "currency_format": {
+        "iso_code": "string",
+        "example_format": "string",
+        "decimal_digits": 1,
+        "decimal_separator": "string",
+        "symbol_first": true,
+        "group_separator": "string",
+        "currency_symbol": "string",
+        "display_symbol": true
+      },
+      "accounts": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "name": "string",
+          "type": "checking",
+          "on_budget": true,
+          "closed": true,
+          "note": null,
+          "balance": 1,
+          "cleared_balance": 1,
+          "uncleared_balance": 1,
+          "transfer_payee_id": null,
+          "...": "[Additional Properties Truncated]"
+        }
+      ],
+      "payees": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "name": "string",
+          "transfer_account_id": null,
+          "deleted": true
+        }
+      ],
+      "payee_locations": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "payee_id": "123e4567-e89b-12d3-a456-426614174000",
+          "latitude": "string",
+          "longitude": "string",
+          "deleted": true
+        }
+      ],
+      "category_groups": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "name": "string",
+          "hidden": true,
+          "deleted": true
+        }
+      ],
+      "categories": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "category_group_id": "123e4567-e89b-12d3-a456-426614174000",
+          "category_group_name": "string",
+          "name": "string",
+          "hidden": true,
+          "original_category_group_id": null,
+          "note": null,
+          "budgeted": 1,
+          "activity": 1,
+          "balance": 1,
+          "...": "[Additional Properties Truncated]"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-05-15",
+          "note": null,
+          "income": 1,
+          "budgeted": 1,
+          "activity": 1,
+          "to_be_budgeted": 1,
+          "age_of_money": null,
+          "deleted": true,
+          "categories": [
+            {
+              "id": "123e4567-e89b-12d3-a456-426614174000",
+              "category_group_id": "123e4567-e89b-12d3-a456-426614174000",
+              "category_group_name": "string",
+              "name": "string",
+              "hidden": true,
+              "original_category_group_id": null,
+              "note": null,
+              "budgeted": 1,
+              "activity": 1,
+              "balance": 1,
+              "...": "[Additional Properties Truncated]"
+            }
+          ]
+        }
+      ],
+      "transactions": [
+        {
+          "id": "string",
+          "date": "2026-05-15",
+          "amount": 1,
+          "memo": null,
+          "cleared": "cleared",
+          "approved": true,
+          "flag_color": "red",
+          "flag_name": null,
+          "account_id": "123e4567-e89b-12d3-a456-426614174000",
+          "payee_id": null,
+          "...": "[Additional Properties Truncated]"
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "string",
+          "transaction_id": "string",
+          "amount": 1,
+          "memo": null,
+          "payee_id": null,
+          "payee_name": null,
+          "category_id": null,
+          "category_name": null,
+          "transfer_account_id": null,
+          "transfer_transaction_id": null,
+          "...": "[Additional Properties Truncated]"
+        }
+      ],
+      "scheduled_transactions": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "date_first": "2026-05-15",
+          "date_next": "2026-05-15",
+          "frequency": "never",
+          "amount": 1,
+          "memo": null,
+          "flag_color": "red",
+          "flag_name": null,
+          "account_id": "123e4567-e89b-12d3-a456-426614174000",
+          "payee_id": null,
+          "...": "[Additional Properties Truncated]"
+        }
+      ],
+      "scheduled_subtransactions": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "scheduled_transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+          "amount": 1,
+          "memo": null,
+          "payee_id": null,
+          "payee_name": null,
+          "category_id": null,
+          "category_name": null,
+          "transfer_account_id": null,
+          "deleted": true
+        }
+      ]
+    },
+    "server_knowledge": 1
+  }
+}
