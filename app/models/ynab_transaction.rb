@@ -1,0 +1,2 @@
+class YnabTransaction < ApplicationRecord
+end

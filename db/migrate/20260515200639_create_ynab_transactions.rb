@@ -1,6 +1,6 @@
-class CreateTransactions < ActiveRecord::Migration[8.1]
+class CreateYnabTransactions < ActiveRecord::Migration[8.1]
   def change
-    create_table :transactions do |t|
+    create_table :ynab_transactions do |t|
       t.string :ynab_id
       t.string :plan_id
       t.string :account_id
