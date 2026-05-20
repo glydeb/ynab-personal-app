@@ -20,10 +20,10 @@ class CreateYnabTransactions < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
-    add_index :transactions, :ynab_id, unique: true
-    add_index :transactions, :plan_id
-    add_index :transactions, :account_id
-    add_index :transactions, :payee_id
-    add_index :transactions, :category_id
+    add_index :ynab_transactions, :ynab_id, unique: true
+    add_index :ynab_transactions, :plan_id
+    add_index :ynab_transactions, :account_id
+    add_index :ynab_transactions, :payee_id
+    add_index :ynab_transactions, :category_id
   end
 end
