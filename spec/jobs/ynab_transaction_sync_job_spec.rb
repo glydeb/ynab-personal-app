@@ -55,5 +55,139 @@ RSpec.describe YnabTransactionSyncJob, type: :job do
         }.to raise_error(StandardError, 'API Failure')
       end
     end
+
+    context 'processing delta payloads' do
+      let(:response_data) { double('data', server_knowledge: 100, transactions: transactions) }
+      let(:mock_response) { double('response', data: response_data) }
+
+      before do
+        allow(mock_transactions_api).to receive(:get_transactions).and_return(mock_response)
+      end
+
+      context 'with a new or updated transaction' do
+        let(:transactions) do
+          [
+            double('transaction',
+                   id: 'tx-1',
+                   deleted: false,
+                   account_id: 'acc-1',
+                   date: '2023-01-01',
+                   amount: 1000,
+                   memo: 'Groceries',
+                   cleared: 'cleared',
+                   approved: true,
+                   flag_color: 'red',
+                   payee_id: 'pay-1',
+                   category_id: 'cat-1',
+                   transfer_account_id: nil,
+                   transfer_transaction_id: nil,
+                   matched_transaction_id: nil,
+                   import_id: nil,
+                   subtransactions: [])
+          ]
+        end
+
+        it 'upserts the transaction with correct attributes' do
+          expect {
+            described_class.new.perform(plan_id)
+          }.to change(YnabTransaction, :count).by(1)
+
+          tx = YnabTransaction.find_by(ynab_id: 'tx-1')
+          expect(tx.memo).to eq('Groceries')
+          expect(tx.amount).to eq(1000)
+          expect(tx.account_id).to eq('acc-1')
+          expect(tx.date.to_s).to eq('2023-01-01')
+        end
+      end
+
+      context 'with a deleted transaction' do
+        let(:transactions) do
+          [ double('transaction', id: 'tx-2', deleted: true, subtransactions: []) ]
+        end
+
+        before do
+          create(:ynab_transaction, ynab_id: 'tx-2', plan_id: plan_id)
+        end
+
+        it 'destroys the local transaction' do
+          expect {
+            described_class.new.perform(plan_id)
+          }.to change(YnabTransaction, :count).by(-1)
+
+          expect(YnabTransaction.find_by(ynab_id: 'tx-2')).to be_nil
+        end
+      end
+
+      context 'with subtransactions' do
+        let(:transactions) do
+          [
+            double('transaction',
+                   id: 'tx-3',
+                   deleted: false,
+                   account_id: 'acc-1',
+                   date: '2023-01-01',
+                   amount: 1000,
+                   memo: 'Split',
+                   cleared: 'cleared',
+                   approved: true,
+                   flag_color: nil,
+                   payee_id: 'pay-1',
+                   category_id: nil,
+                   transfer_account_id: nil,
+                   transfer_transaction_id: nil,
+                   matched_transaction_id: nil,
+                   import_id: nil,
+                   subtransactions: subtransactions)
+          ]
+        end
+
+        context 'when subtransaction is new or updated' do
+          let(:subtransactions) do
+            [
+              double('subtransaction',
+                     id: 'sub-1',
+                     deleted: false,
+                     amount: 500,
+                     memo: 'Part 1',
+                     payee_id: 'pay-1',
+                     category_id: 'cat-2',
+                     transfer_account_id: nil,
+                     transfer_transaction_id: nil)
+            ]
+          end
+
+          it 'upserts the subtransaction' do
+            expect {
+              described_class.new.perform(plan_id)
+            }.to change(Subtransaction, :count).by(1)
+
+            stx = Subtransaction.find_by(ynab_id: 'sub-1')
+            expect(stx.memo).to eq('Part 1')
+            expect(stx.amount).to eq(500)
+            expect(stx.transaction_id).to eq('tx-3')
+          end
+        end
+
+        context 'when subtransaction is deleted' do
+          let(:subtransactions) do
+            [
+              double('subtransaction', id: 'sub-2', deleted: true)
+            ]
+          end
+
+          before do
+            create(:subtransaction, ynab_id: 'sub-2')
+          end
+
+          it 'destroys the local subtransaction' do
+            expect {
+              described_class.new.perform(plan_id)
+            }.to change(Subtransaction, :count).by(-1)
+
+            expect(Subtransaction.find_by(ynab_id: 'sub-2')).to be_nil
+          end
+        end
+      end
+    end
   end
 end
