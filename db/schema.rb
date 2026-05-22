@@ -127,7 +127,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_200642) do
     t.index ["ynab_id"], name: "index_subtransactions_on_ynab_id", unique: true
   end
 
-  create_table "transactions", force: :cascade do |t|
+  create_table "ynab_transactions", force: :cascade do |t|
     t.string "account_id"
     t.bigint "amount"
     t.boolean "approved"
@@ -146,10 +146,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_200642) do
     t.string "transfer_transaction_id"
     t.datetime "updated_at", null: false
     t.string "ynab_id"
-    t.index ["account_id"], name: "index_transactions_on_account_id"
-    t.index ["category_id"], name: "index_transactions_on_category_id"
-    t.index ["payee_id"], name: "index_transactions_on_payee_id"
-    t.index ["plan_id"], name: "index_transactions_on_plan_id"
-    t.index ["ynab_id"], name: "index_transactions_on_ynab_id", unique: true
+    t.index ["account_id"], name: "index_ynab_transactions_on_account_id"
+    t.index ["category_id"], name: "index_ynab_transactions_on_category_id"
+    t.index ["payee_id"], name: "index_ynab_transactions_on_payee_id"
+    t.index ["plan_id"], name: "index_ynab_transactions_on_plan_id"
+    t.index ["ynab_id"], name: "index_ynab_transactions_on_ynab_id", unique: true
   end
 end

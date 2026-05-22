@@ -63,6 +63,8 @@ group :development, :test do
   gem "rspec-rails"
   gem "vcr"
   gem "webmock"
+  gem "factory_bot_rails"
+  gem "shoulda-matchers"
 end
 
 group :development do

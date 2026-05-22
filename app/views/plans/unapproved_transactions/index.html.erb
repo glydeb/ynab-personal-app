@@ -1,0 +1,94 @@
+<div class="page-header">
+  <div>
+    <%= link_to "← Back to #{@plan.name}", plan_path(@plan), style: "color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; display: block; margin-bottom: 8px;" %>
+    <h1>Unapproved Transactions</h1>
+  </div>
+  <button class="btn btn-primary">Approve Selected</button>
+</div>
+
+<h2 class="section-title">Uncategorized (<%= @uncategorized.length %>)</h2>
+
+<% if @uncategorized.any? %>
+  <div class="glass-panel table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 40px;"><input type="checkbox"></th>
+          <th><%= sort_link('account') %></th>
+          <th><%= sort_link('date', 'Date (M/D)') %></th>
+          <th><%= sort_link('payee') %></th>
+          <th style="text-align: right;"><%= sort_link('amount') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% previous_transaction = nil %>
+        <% @uncategorized.each do |t| %>
+          <% if render_year_divider?(t, previous_transaction) %>
+            <tr class="year-divider">
+              <td colspan="5"><%= t.date.year %></td>
+            </tr>
+          <% end %>
+          <tr>
+            <td><input type="checkbox" value="<%= t.id %>"></td>
+            <td><%= t.account&.name %></td>
+            <td><%= t.date&.strftime('%-m/%-d') %></td>
+            <td><%= t.payee&.name %></td>
+            <td style="text-align: right;" class="<%= t.amount.to_i >= 0 ? 'amount-positive' : 'amount-negative' %>">
+              <%= format_milliunits(t.amount) %>
+            </td>
+          </tr>
+          <% previous_transaction = t %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="glass-panel empty-state">
+    <p>You have no uncategorized transactions to review! 🎉</p>
+  </div>
+<% end %>
+
+
+<h2 class="section-title">Pre-categorized (<%= @pre_categorized.length %>)</h2>
+
+<% if @pre_categorized.any? %>
+  <div class="glass-panel table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 40px;"><input type="checkbox"></th>
+          <th><%= sort_link('account') %></th>
+          <th><%= sort_link('date', 'Date (M/D)') %></th>
+          <th><%= sort_link('payee') %></th>
+          <th><%= sort_link('category') %></th>
+          <th style="text-align: right;"><%= sort_link('amount') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% previous_transaction = nil %>
+        <% @pre_categorized.each do |t| %>
+          <% if render_year_divider?(t, previous_transaction) %>
+            <tr class="year-divider">
+              <td colspan="6"><%= t.date.year %></td>
+            </tr>
+          <% end %>
+          <tr>
+            <td><input type="checkbox" value="<%= t.id %>"></td>
+            <td><%= t.account&.name %></td>
+            <td><%= t.date&.strftime('%-m/%-d') %></td>
+            <td><%= t.payee&.name %></td>
+            <td><%= t.category&.name %></td>
+            <td style="text-align: right;" class="<%= t.amount.to_i >= 0 ? 'amount-positive' : 'amount-negative' %>">
+              <%= format_milliunits(t.amount) %>
+            </td>
+          </tr>
+          <% previous_transaction = t %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="glass-panel empty-state">
+    <p>No pre-categorized transactions pending approval.</p>
+  </div>
+<% end %>
