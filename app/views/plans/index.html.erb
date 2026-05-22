@@ -1,0 +1,19 @@
+<div class="page-header">
+  <h1>Your Budget Plans</h1>
+  <button class="btn btn-primary" onclick="alert('Syncing from YNAB...')">Sync Now</button>
+</div>
+
+<% if @plans.any? %>
+  <div class="plan-grid">
+    <% @plans.each do |plan| %>
+      <%= link_to plan_path(plan), class: "plan-card glass-panel" do %>
+        <h2><%= plan.name %></h2>
+        <p>Last Modified: <%= plan.last_modified_on ? time_ago_in_words(plan.last_modified_on) + " ago" : "Unknown" %></p>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="glass-panel empty-state">
+    <p>No plans found. Make sure you run the YnabPlanSyncJob.</p>
+  </div>
+<% end %>

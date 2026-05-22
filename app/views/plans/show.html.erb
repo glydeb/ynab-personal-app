@@ -1,0 +1,15 @@
+<div class="page-header">
+  <div>
+    <%= link_to "← Back to Plans", plans_path, style: "color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; display: block; margin-bottom: 8px;" %>
+    <h1><%= @plan.name %></h1>
+    <p style="color: var(--text-secondary); margin: 0;">Budget ID: <%= @plan.ynab_id %></p>
+  </div>
+  
+  <%= link_to "Review Unapproved Transactions", plan_unapproved_transactions_path(@plan), class: "btn btn-primary" %>
+</div>
+
+<div class="glass-panel">
+  <h2>Budget Dashboard</h2>
+  <p>Welcome to the dashboard for <strong><%= @plan.name %></strong>.</p>
+  <p>Use the button above to quickly categorize your unapproved transactions.</p>
+</div>
