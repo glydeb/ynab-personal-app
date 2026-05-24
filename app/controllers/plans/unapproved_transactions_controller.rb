@@ -12,6 +12,30 @@ module Plans
       @pre_categorized = base_query.pre_categorized_unapproved
     end
 
+    def sync
+      YnabTransactionSyncJob.perform_now(@plan.id)
+      flash[:notice] = "Transactions successfully synchronized with YNAB."
+      redirect_to plan_unapproved_transactions_path(@plan)
+    end
+
+    def approve
+      transaction_ids = params[:transaction_ids] || []
+      transactions = @plan.ynab_transactions.where(id: transaction_ids)
+
+      if transactions.any?
+        service = Ynab::BulkUpdateService.new(@plan)
+        if service.approve_transactions(transactions)
+          flash[:notice] = "Successfully approved #{transactions.count} transactions."
+        else
+          flash[:alert] = "Failed to communicate with YNAB API. Please try again."
+        end
+      else
+        flash[:alert] = "No transactions were selected."
+      end
+
+      redirect_to plan_unapproved_transactions_path(@plan)
+    end
+
     private
 
     def set_plan

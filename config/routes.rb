@@ -10,7 +10,12 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   resources :plans, only: [:index, :show] do
-    resources :unapproved_transactions, only: [:index], module: :plans
+    resources :unapproved_transactions, only: [:index], module: :plans do
+      collection do
+        post :sync
+        post :approve
+      end
+    end
   end
 
   root "plans#index"
