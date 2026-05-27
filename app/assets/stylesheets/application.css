@@ -258,8 +258,9 @@ tr:not(.year-divider):hover {
   background: var(--surface-color);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--surface-border);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--surface-border);
   margin-bottom: 2rem;
 }
 

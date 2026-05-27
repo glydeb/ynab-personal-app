@@ -4,7 +4,7 @@ module Plans
 
     def index
       order_string = "#{sort_column} #{sort_direction}"
-      
+
       # If primary sort isn't date or amount, append the secondary sort
       unless %w[ynab_transactions.date ynab_transactions.amount].include?(sort_column)
         sec_sort_col = secondary_sort_column
@@ -27,19 +27,29 @@ module Plans
       redirect_to plan_unapproved_transactions_path(@plan)
     end
 
-    def approve
+    def process_bulk
       transaction_ids = params[:transaction_ids] || []
       transactions = @plan.ynab_transactions.where(id: transaction_ids)
 
-      if transactions.any?
-        service = Ynab::BulkUpdateService.new(@plan)
+      if transactions.empty?
+        flash[:alert] = "No transactions were selected."
+        return redirect_to plan_unapproved_transactions_path(@plan)
+      end
+
+      service = Ynab::BulkUpdateService.new(@plan)
+
+      if params[:commit] == "reject"
+        if service.clear_categories(transactions)
+          flash[:notice] = "Successfully cleared categories for #{transactions.count} transactions."
+        else
+          flash[:alert] = "Failed to communicate with YNAB API. Please try again."
+        end
+      else
         if service.approve_transactions(transactions)
           flash[:notice] = "Successfully approved #{transactions.count} transactions."
         else
           flash[:alert] = "Failed to communicate with YNAB API. Please try again."
         end
-      else
-        flash[:alert] = "No transactions were selected."
       end
 
       redirect_to plan_unapproved_transactions_path(@plan)

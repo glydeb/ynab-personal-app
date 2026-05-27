@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_15_200642) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_042016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -80,6 +80,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_200642) do
     t.datetime "updated_at", null: false
     t.string "ynab_id"
     t.index ["ynab_id"], name: "index_plans_on_ynab_id", unique: true
+  end
+
+  create_table "rejected_categories", force: :cascade do |t|
+    t.string "category_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "ynab_transaction_id"
+    t.index ["category_id"], name: "index_rejected_categories_on_category_id"
+    t.index ["ynab_transaction_id"], name: "index_rejected_categories_on_ynab_transaction_id"
   end
 
   create_table "scheduled_transactions", force: :cascade do |t|

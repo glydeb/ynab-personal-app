@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     resources :unapproved_transactions, only: [:index], module: :plans do
       collection do
         post :sync
-        post :approve
+        post :process_bulk
       end
     end
   end

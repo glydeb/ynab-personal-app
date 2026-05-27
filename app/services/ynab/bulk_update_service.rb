@@ -32,9 +32,44 @@ module Ynab
         Rails.logger.error("YNAB API Error during bulk update: #{e.response_body}")
         false
       rescue StandardError => e
-        Rails.logger.error("Failed to bulk update YNAB transactions: #{e.message}")
+        Rails.logger.error("Failed to bulk approve transactions: #{e.message}")
         false
       end
+    end
+
+    def clear_categories(transactions)
+      transactions_payload = transactions.map do |t|
+        {
+          id: t.ynab_id,
+          category_id: nil,
+          approved: false
+        }
+      end
+
+      wrapper = {
+        transactions: transactions_payload
+      }
+
+      response = @client.transactions.update_transactions(@plan.ynab_id, wrapper)
+
+      if response.data.server_knowledge
+        knowledge_record = ServerKnowledge.find_or_initialize_by(plan_id: @plan.ynab_id, topic: "transactions")
+        knowledge_record.update!(knowledge: response.data.server_knowledge)
+      end
+
+      ActiveRecord::Base.transaction do
+        transactions.each do |t|
+          if t.category_id.present?
+            RejectedCategory.create!(ynab_transaction_id: t.ynab_id, category_id: t.category_id)
+          end
+          t.update!(category_id: nil, approved: false)
+        end
+      end
+
+      true
+    rescue StandardError => e
+      Rails.logger.error("Failed to bulk clear categories: #{e.message}")
+      false
     end
   end
 end

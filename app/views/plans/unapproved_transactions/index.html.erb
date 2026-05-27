@@ -20,8 +20,12 @@
       </div>
       <%= button_to "Sync with YNAB", sync_plan_unapproved_transactions_path(@plan), method: :post, class: "btn btn-secondary", data: { turbo: false }, onclick: "showLoader('Syncing with YNAB...')" %>
       
-      <button form="approve-form" type="submit" class="btn btn-primary" onclick="showLoader('Approving transactions...')">
-        Approve Selected (<span id="selection-counter">0</span>)
+      <button form="approve-form" type="submit" name="commit" value="reject" class="btn btn-secondary" style="border-color: var(--danger-color); color: var(--danger-color);" onclick="showLoader('Removing categorizations...')">
+        Reject & Clear (<span class="selection-counter">0</span>)
+      </button>
+      
+      <button form="approve-form" type="submit" name="commit" value="approve" class="btn btn-primary" onclick="showLoader('Approving transactions...')">
+        Approve Selected (<span class="selection-counter">0</span>)
       </button>
     </div>
   </div>
@@ -34,7 +38,7 @@
   </div>
 </div>
 
-<%= form_with url: approve_plan_unapproved_transactions_path(@plan), local: true, method: :post, id: "approve-form", data: { turbo: false } do |f| %>
+<%= form_with url: process_bulk_plan_unapproved_transactions_path(@plan), local: true, method: :post, id: "approve-form", data: { turbo: false } do |f| %>
   
   <div id="tab-uncategorized" class="tab-content active">
     <% if @uncategorized.any? %>
@@ -167,7 +171,7 @@
 
   function updateSelectionCounter() {
     const checkboxes = document.querySelectorAll('.row-checkbox:checked');
-    document.getElementById('selection-counter').innerText = checkboxes.length;
+    document.querySelectorAll('.selection-counter').forEach(el => el.innerText = checkboxes.length);
   }
 
   // Listen to all checkbox changes
