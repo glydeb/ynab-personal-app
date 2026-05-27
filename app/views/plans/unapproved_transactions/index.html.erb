@@ -18,7 +18,7 @@
           <option value="date" <%= params[:secondary_sort] == 'date' ? 'selected' : '' %>>Date</option>
         </select>
       </div>
-      <%= button_to "Sync with YNAB", sync_plan_unapproved_transactions_path(@plan), method: :post, class: "btn", style: "background-color: var(--surface-border);", data: { turbo: false }, onclick: "showLoader('Syncing with YNAB...')" %>
+      <%= button_to "Sync with YNAB", sync_plan_unapproved_transactions_path(@plan), method: :post, class: "btn btn-secondary", data: { turbo: false }, onclick: "showLoader('Syncing with YNAB...')" %>
       
       <button form="approve-form" type="submit" class="btn btn-primary" onclick="showLoader('Approving transactions...')">
         Approve Selected (<span id="selection-counter">0</span>)
@@ -141,7 +141,15 @@
     }
   }
 
-  function switchTab(tabId, btnElement) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTab = sessionStorage.getItem('ynab-active-tab') || 'uncategorized';
+    const btn = document.querySelector(`.tab-button[onclick*="'${savedTab}'"]`);
+    if (btn) {
+      switchTab(savedTab, btn, false);
+    }
+  });
+
+  function switchTab(tabId, btnElement, save = true) {
     // Hide all tab content
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     // Remove active state from all buttons
@@ -151,6 +159,10 @@
     document.getElementById('tab-' + tabId).classList.add('active');
     // Set active state on clicked button
     btnElement.classList.add('active');
+
+    if (save) {
+      sessionStorage.setItem('ynab-active-tab', tabId);
+    }
   }
 
   function updateSelectionCounter() {
