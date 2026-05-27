@@ -22,7 +22,7 @@ module Plans
     end
 
     def sync
-      YnabTransactionSyncJob.perform_now(@plan.id)
+      YnabTransactionSyncJob.perform_now(@plan.ynab_id)
       flash[:notice] = "Transactions successfully synchronized with YNAB."
       redirect_to plan_unapproved_transactions_path(@plan)
     end
