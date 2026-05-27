@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  rails-app:
+    image: mcr.microsoft.com/devcontainers/ruby:3.4
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/ynab_personal_app_development
+    depends_on:
+      - db
