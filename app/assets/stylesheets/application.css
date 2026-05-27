@@ -84,6 +84,17 @@ a:hover {
   transform: translateY(-1px);
 }
 
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--surface-border);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 /* Plan Cards Grid */
 .plan-grid {
   display: grid;
