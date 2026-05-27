@@ -26,7 +26,8 @@
     <main class="container">
       <% flash.each do |key, message| %>
         <div class="flash <%= key == 'notice' ? 'flash-success' : 'flash-danger' %>">
-          <%= message %>
+          <span><%= message %></span>
+          <button class="flash-close" onclick="this.parentElement.remove();">&times;</button>
         </div>
       <% end %>
       <%= yield %>

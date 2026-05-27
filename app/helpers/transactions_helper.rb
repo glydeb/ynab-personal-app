@@ -13,7 +13,7 @@ module TransactionsHelper
     direction = current_sort == column && current_direction == "asc" ? "desc" : "asc"
     icon = sort_icon(column)
 
-    link_to "#{title} #{icon}".html_safe, request.params.merge(sort: column, direction: direction)
+    link_to "#{title} #{icon}".html_safe, request.params.merge(sort: column, direction: direction, secondary_sort: params[:secondary_sort])
   end
 
   def sort_icon(column)

@@ -3,10 +3,19 @@ module Plans
     before_action :set_plan
 
     def index
+      order_string = "#{sort_column} #{sort_direction}"
+      
+      # If primary sort isn't date or amount, append the secondary sort
+      unless %w[ynab_transactions.date ynab_transactions.amount].include?(sort_column)
+        sec_sort_col = secondary_sort_column
+        sec_sort_dir = "desc" # Defaulting secondary to desc makes sense for amounts and dates
+        order_string += ", #{sec_sort_col} #{sec_sort_dir}"
+      end
+
       base_query = @plan.ynab_transactions
                         .includes(:account, :payee, :category)
                         .references(:account, :payee, :category)
-                        .order("#{sort_column} #{sort_direction}")
+                        .order(order_string)
 
       @uncategorized = base_query.uncategorized_unapproved
       @pre_categorized = base_query.pre_categorized_unapproved
@@ -56,6 +65,10 @@ module Plans
 
     def sort_direction
       %w[asc desc].include?(params[:direction]) ? params[:direction] : "desc"
+    end
+
+    def secondary_sort_column
+      %w[date amount].include?(params[:secondary_sort]) ? "ynab_transactions.#{params[:secondary_sort]}" : "ynab_transactions.amount"
     end
   end
 end

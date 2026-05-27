@@ -3,108 +3,125 @@
   <p id="loading-text" style="font-weight: 500;">Loading...</p>
 </div>
 
-<div class="page-header">
-  <div>
-    <%= link_to "← Back to #{@plan.name}", plan_path(@plan), style: "color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; display: block; margin-bottom: 8px;" %>
-    <h1>Unapproved Transactions</h1>
-  </div>
-  
-  <%= button_to "Sync with YNAB", sync_plan_unapproved_transactions_path(@plan), method: :post, class: "btn btn-primary", data: { turbo: false }, onclick: "showLoader('Syncing with YNAB...')" %>
-</div>
-
-<h2 class="section-title">Uncategorized (<%= @uncategorized.length %>)</h2>
-
-<% if @uncategorized.any? %>
-  <div class="glass-panel table-wrapper">
-    <table class="transaction-table">
-      <thead>
-        <tr>
-          <th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th>
-          <th><%= sort_link('account') %></th>
-          <th><%= sort_link('date', 'Date (M/D)') %></th>
-          <th><%= sort_link('payee') %></th>
-          <th style="text-align: right;"><%= sort_link('amount') %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% previous_transaction = nil %>
-        <% @uncategorized.each do |t| %>
-          <% if render_year_divider?(t, previous_transaction) %>
-            <tr class="year-divider">
-              <td colspan="5"><%= t.date.year %></td>
-            </tr>
-          <% end %>
-          <tr>
-            <td><input type="checkbox" value="<%= t.id %>" class="row-checkbox"></td>
-            <td><%= t.account&.name %></td>
-            <td><%= t.date&.strftime('%-m/%-d') %></td>
-            <td class="clickable-cell" data-payee-id="<%= t.payee_id %>" onclick="toggleSimilar(this, 'payee')"><%= t.payee&.name %></td>
-            <td style="text-align: right;" class="<%= t.amount.to_i >= 0 ? 'amount-positive' : 'amount-negative' %>">
-              <%= format_milliunits(t.amount) %>
-            </td>
-          </tr>
-          <% previous_transaction = t %>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <div class="glass-panel empty-state">
-    <p>You have no uncategorized transactions to review! 🎉</p>
-  </div>
-<% end %>
-
-
-<div class="page-header" style="margin-top: 3rem; margin-bottom: 1rem;">
-  <h2 style="margin: 0;">Pre-categorized (<%= @pre_categorized.length %>)</h2>
-</div>
-
-<% if @pre_categorized.any? %>
-  <%= form_with url: approve_plan_unapproved_transactions_path(@plan), local: true, method: :post, data: { turbo: false }, onsubmit: "showLoader('Approving transactions...')" do |f| %>
-    <div style="margin-bottom: 1rem;">
-      <%= f.submit "Approve Selected", class: "btn btn-primary" %>
+<div class="action-bar" style="flex-direction: column;">
+  <div class="action-bar-top" style="width: 100%;">
+    <div style="display: flex; flex-direction: column;">
+      <%= link_to "← Back to #{@plan.name}", plan_path(@plan), style: "color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; display: block; margin-bottom: 4px;" %>
+      <h1 style="margin: 0;">Unapproved Transactions</h1>
     </div>
     
-    <div class="glass-panel table-wrapper">
-      <table class="transaction-table">
-        <thead>
-          <tr>
-            <th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th>
-            <th><%= sort_link('account') %></th>
-            <th><%= sort_link('date', 'Date (M/D)') %></th>
-            <th><%= sort_link('payee') %></th>
-            <th><%= sort_link('category') %></th>
-            <th style="text-align: right;"><%= sort_link('amount') %></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% previous_transaction = nil %>
-          <% @pre_categorized.each do |t| %>
-            <% if render_year_divider?(t, previous_transaction) %>
-              <tr class="year-divider">
-                <td colspan="6"><%= t.date.year %></td>
-              </tr>
-            <% end %>
-            <tr>
-              <td><input type="checkbox" name="transaction_ids[]" value="<%= t.id %>" class="row-checkbox"></td>
-              <td><%= t.account&.name %></td>
-              <td><%= t.date&.strftime('%-m/%-d') %></td>
-              <td class="clickable-cell" data-payee-id="<%= t.payee_id %>" onclick="toggleSimilar(this, 'payee')"><%= t.payee&.name %></td>
-              <td class="clickable-cell" data-category-id="<%= t.category_id %>" onclick="toggleSimilar(this, 'category')"><%= t.category&.name %></td>
-              <td style="text-align: right;" class="<%= t.amount.to_i >= 0 ? 'amount-positive' : 'amount-negative' %>">
-                <%= format_milliunits(t.amount) %>
-              </td>
-            </tr>
-            <% previous_transaction = t %>
-          <% end %>
-        </tbody>
-      </table>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <div class="secondary-sort-toggle">
+        <label for="secondary_sort">Secondary Sort:</label>
+        <select id="secondary_sort" onchange="window.location.href = updateQueryStringParameter(window.location.href, 'secondary_sort', this.value)">
+          <option value="amount" <%= params[:secondary_sort] != 'date' ? 'selected' : '' %>>Amount</option>
+          <option value="date" <%= params[:secondary_sort] == 'date' ? 'selected' : '' %>>Date</option>
+        </select>
+      </div>
+      <%= button_to "Sync with YNAB", sync_plan_unapproved_transactions_path(@plan), method: :post, class: "btn", style: "background-color: var(--surface-border);", data: { turbo: false }, onclick: "showLoader('Syncing with YNAB...')" %>
+      
+      <button form="approve-form" type="submit" class="btn btn-primary" onclick="showLoader('Approving transactions...')">
+        Approve Selected (<span id="selection-counter">0</span>)
+      </button>
     </div>
-  <% end %>
-<% else %>
-  <div class="glass-panel empty-state">
-    <p>No pre-categorized transactions pending approval.</p>
   </div>
+  
+  <div class="action-bar-bottom" style="width: 100%;">
+    <div class="tabs">
+      <button class="tab-button active" onclick="switchTab('uncategorized', this)">Uncategorized (<%= @uncategorized.length %>)</button>
+      <button class="tab-button" onclick="switchTab('precategorized', this)">Pre-categorized (<%= @pre_categorized.length %>)</button>
+    </div>
+  </div>
+</div>
+
+<%= form_with url: approve_plan_unapproved_transactions_path(@plan), local: true, method: :post, id: "approve-form", data: { turbo: false } do |f| %>
+  
+  <div id="tab-uncategorized" class="tab-content active">
+    <% if @uncategorized.any? %>
+      <div class="glass-panel table-wrapper">
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th>
+              <th><%= sort_link('account') %></th>
+              <th><%= sort_link('date', 'Date (M/D)') %></th>
+              <th><%= sort_link('payee') %></th>
+              <th style="text-align: right;"><%= sort_link('amount') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% previous_transaction = nil %>
+            <% @uncategorized.each do |t| %>
+              <% if render_year_divider?(t, previous_transaction) %>
+                <tr class="year-divider">
+                  <td colspan="5"><%= t.date.year %></td>
+                </tr>
+              <% end %>
+              <tr>
+                <td><input type="checkbox" name="transaction_ids[]" value="<%= t.id %>" class="row-checkbox"></td>
+                <td><%= t.account&.name %></td>
+                <td><%= t.date&.strftime('%-m/%-d') %></td>
+                <td class="clickable-cell" data-payee-id="<%= t.payee_id %>" onclick="toggleSimilar(this, 'payee')"><%= t.payee&.name %></td>
+                <td style="text-align: right;" class="<%= t.amount.to_i >= 0 ? 'amount-positive' : 'amount-negative' %>">
+                  <%= format_milliunits(t.amount) %>
+                </td>
+              </tr>
+              <% previous_transaction = t %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="glass-panel empty-state">
+        <p>You have no uncategorized transactions to review! 🎉</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="tab-precategorized" class="tab-content">
+    <% if @pre_categorized.any? %>
+      <div class="glass-panel table-wrapper">
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th>
+              <th><%= sort_link('account') %></th>
+              <th><%= sort_link('date', 'Date (M/D)') %></th>
+              <th><%= sort_link('payee') %></th>
+              <th><%= sort_link('category') %></th>
+              <th style="text-align: right;"><%= sort_link('amount') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% previous_transaction = nil %>
+            <% @pre_categorized.each do |t| %>
+              <% if render_year_divider?(t, previous_transaction) %>
+                <tr class="year-divider">
+                  <td colspan="6"><%= t.date.year %></td>
+                </tr>
+              <% end %>
+              <tr>
+                <td><input type="checkbox" name="transaction_ids[]" value="<%= t.id %>" class="row-checkbox"></td>
+                <td><%= t.account&.name %></td>
+                <td><%= t.date&.strftime('%-m/%-d') %></td>
+                <td class="clickable-cell" data-payee-id="<%= t.payee_id %>" onclick="toggleSimilar(this, 'payee')"><%= t.payee&.name %></td>
+                <td class="clickable-cell" data-category-id="<%= t.category_id %>" onclick="toggleSimilar(this, 'category')"><%= t.category&.name %></td>
+                <td style="text-align: right;" class="<%= t.amount.to_i >= 0 ? 'amount-positive' : 'amount-negative' %>">
+                  <%= format_milliunits(t.amount) %>
+                </td>
+              </tr>
+              <% previous_transaction = t %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="glass-panel empty-state">
+        <p>No pre-categorized transactions pending approval.</p>
+      </div>
+    <% end %>
+  </div>
+
 <% end %>
 
 <script>
@@ -113,10 +130,46 @@
     document.getElementById('loading-overlay').style.display = 'flex';
   }
 
+  function updateQueryStringParameter(uri, key, value) {
+    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+      return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    else {
+      return uri + separator + key + "=" + value;
+    }
+  }
+
+  function switchTab(tabId, btnElement) {
+    // Hide all tab content
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    // Remove active state from all buttons
+    document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+    
+    // Show selected tab content
+    document.getElementById('tab-' + tabId).classList.add('active');
+    // Set active state on clicked button
+    btnElement.classList.add('active');
+  }
+
+  function updateSelectionCounter() {
+    const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+    document.getElementById('selection-counter').innerText = checkboxes.length;
+  }
+
+  // Listen to all checkbox changes
+  document.addEventListener('change', function(e) {
+    if (e.target && e.target.classList.contains('row-checkbox')) {
+      updateSelectionCounter();
+    }
+  });
+
   function toggleAll(headerCheckbox) {
     const table = headerCheckbox.closest('table');
     const checkboxes = table.querySelectorAll('.row-checkbox');
     checkboxes.forEach(cb => cb.checked = headerCheckbox.checked);
+    updateSelectionCounter();
   }
 
   function toggleSimilar(cell, type) {
@@ -124,13 +177,7 @@
     const id = cell.getAttribute(`data-${type}-id`);
     if (!id) return; // Ignore if nil
     
-    // Find all cells in this table matching the id
     const matchingCells = table.querySelectorAll(`td[data-${type}-id="${id}"]`);
-    
-    // Check if the current row's checkbox is checked to determine the toggle state
-    // Or simpler: just toggle the state of the first match, or force check all.
-    // "have all other transactions within that list with the same entry become selected" implies forced checking or toggling based on current.
-    // Let's toggle them. If any are unchecked, check them all. If all are checked, uncheck them all.
     
     let allChecked = true;
     matchingCells.forEach(c => {
@@ -144,5 +191,7 @@
       const rowCheckbox = c.closest('tr').querySelector('.row-checkbox');
       rowCheckbox.checked = !allChecked;
     });
+    
+    updateSelectionCounter();
   }
 </script>

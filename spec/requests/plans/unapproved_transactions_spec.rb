@@ -20,8 +20,8 @@ RSpec.describe 'Plans::UnapprovedTransactions', type: :request do
       get plan_unapproved_transactions_path(plan)
       expect(response).to have_http_status(:success)
 
-      # Test sorting logic safely
-      get plan_unapproved_transactions_path(plan, sort: 'amount', direction: 'asc')
+      # Test sorting logic safely with secondary_sort
+      get plan_unapproved_transactions_path(plan, sort: 'payee', direction: 'asc', secondary_sort: 'amount')
       expect(response).to have_http_status(:success)
     end
   end
