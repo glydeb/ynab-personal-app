@@ -35,6 +35,15 @@ To run the test suite:
 bundle exec rspec
 ```
 
+## Development Environment (Dev Container)
+
+We recommend using the included Dev Container for local development to ensure consistent dependencies and native code auto-reloading without needing to restart Puma for every change.
+
+1. Open this repository in VS Code (or Cursor).
+2. Install the **Dev Containers** extension if prompted.
+3. Press `Cmd+Shift+P` and select **Dev Containers: Reopen in Container**.
+4. The environment will automatically build and install all gems.
+
 ## Running the Application Locally
 
 The application uses Puma as its web server and Solid Queue for background job processing. You can run the application, including its background processes, using the provided development script:
