@@ -36,15 +36,21 @@ module Plans
         return redirect_to plan_unapproved_transactions_path(@plan)
       end
 
-      service = Ynab::BulkUpdateService.new(@plan)
-
       if params[:commit] == "reject"
+        service = Ynab::BulkUpdateService.new(@plan)
         if service.clear_categories(transactions)
           flash[:notice] = "Successfully cleared categories for #{transactions.count} transactions."
         else
           flash[:alert] = "Failed to communicate with YNAB API. Please try again."
         end
+      elsif params[:commit] == "mark_matched"
+        transactions.each do |t|
+          metadata = TransactionMetadata.find_or_initialize_by(ynab_transaction_id: t.ynab_id)
+          metadata.update(marked_as_matched: true)
+        end
+        flash[:notice] = "Successfully marked #{transactions.count} transactions as matched."
       else
+        service = Ynab::BulkUpdateService.new(@plan)
         if service.approve_transactions(transactions)
           flash[:notice] = "Successfully approved #{transactions.count} transactions."
         else

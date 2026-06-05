@@ -24,6 +24,10 @@
         Reject & Clear (<span class="selection-counter">0</span>)
       </button>
       
+      <button form="approve-form" type="submit" name="commit" value="mark_matched" class="btn btn-secondary" onclick="if(!confirm('Are you sure you want to mark these as matched? This cannot be undone.')){ return false; } showLoader('Marking as matched...');">
+        Mark as Matched (<span class="selection-counter">0</span>)
+      </button>
+      
       <button form="approve-form" type="submit" name="commit" value="approve" class="btn btn-primary" onclick="showLoader('Approving transactions...')">
         Approve Selected (<span class="selection-counter">0</span>)
       </button>

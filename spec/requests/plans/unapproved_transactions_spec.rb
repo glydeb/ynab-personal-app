@@ -68,5 +68,13 @@ RSpec.describe 'Plans::UnapprovedTransactions', type: :request do
       expect(response).to redirect_to(plan_unapproved_transactions_path(plan))
       expect(flash[:notice]).to match(/Successfully cleared categories/)
     end
+
+    it 'creates transaction metadata and redirects with success when commit=mark_matched' do
+      post process_bulk_plan_unapproved_transactions_path(plan), params: { transaction_ids: transactions_to_approve.map(&:id), commit: 'mark_matched' }
+      
+      expect(TransactionMetadata.where(ynab_transaction_id: transactions_to_approve.map(&:ynab_id), marked_as_matched: true).count).to eq(1)
+      expect(response).to redirect_to(plan_unapproved_transactions_path(plan))
+      expect(flash[:notice]).to match(/Successfully marked/)
+    end
   end
 end

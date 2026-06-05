@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_042016) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_05_172056) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -134,6 +134,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_042016) do
     t.string "ynab_id"
     t.index ["transaction_id"], name: "index_subtransactions_on_transaction_id"
     t.index ["ynab_id"], name: "index_subtransactions_on_ynab_id", unique: true
+  end
+
+  create_table "transaction_metadata", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "marked_as_matched", default: false
+    t.datetime "updated_at", null: false
+    t.string "ynab_transaction_id"
+    t.index ["ynab_transaction_id"], name: "index_transaction_metadata_on_ynab_transaction_id"
   end
 
   create_table "ynab_transactions", force: :cascade do |t|
