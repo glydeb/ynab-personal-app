@@ -17,6 +17,38 @@ class YnabTransactionSyncJob < ApplicationJob
 
     data = response.data
 
+    referenced_payee_ids = []
+    referenced_category_ids = []
+
+    data.transactions.each do |t|
+      referenced_payee_ids << t.payee_id if t.payee_id
+      referenced_category_ids << t.category_id if t.category_id
+
+      if t.subtransactions.present?
+        t.subtransactions.each do |sub|
+          referenced_payee_ids << sub.payee_id if sub.payee_id
+          referenced_category_ids << sub.category_id if sub.category_id
+        end
+      end
+    end
+
+    referenced_payee_ids.uniq!
+    referenced_category_ids.uniq!
+
+    if referenced_payee_ids.any?
+      existing_payees = Payee.where(plan_id: plan_id, ynab_id: referenced_payee_ids).pluck(:ynab_id)
+      if (referenced_payee_ids - existing_payees).any?
+        YnabPayeeSyncJob.perform_now(plan_id)
+      end
+    end
+
+    if referenced_category_ids.any?
+      existing_categories = Category.where(plan_id: plan_id, ynab_id: referenced_category_ids).pluck(:ynab_id)
+      if (referenced_category_ids - existing_categories).any?
+        YnabCategorySyncJob.perform_now(plan_id)
+      end
+    end
+
     # 3. Process the Delta Array and update Server Knowledge Atomically
     ActiveRecord::Base.transaction do
       data.transactions.each do |t|

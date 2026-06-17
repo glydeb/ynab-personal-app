@@ -10,6 +10,8 @@ RSpec.describe YnabTransactionSyncJob, type: :job do
     before do
       allow(Ynab::ClientService).to receive(:new).and_return(mock_service)
       allow(mock_client).to receive(:transactions).and_return(mock_transactions_api)
+      allow(YnabPayeeSyncJob).to receive(:perform_now)
+      allow(YnabCategorySyncJob).to receive(:perform_now)
     end
 
     context 'when no previous server knowledge exists' do
@@ -102,7 +104,7 @@ RSpec.describe YnabTransactionSyncJob, type: :job do
 
       context 'with a deleted transaction' do
         let(:transactions) do
-          [ double('transaction', id: 'tx-2', deleted: true, subtransactions: []) ]
+          [ double('transaction', id: 'tx-2', deleted: true, payee_id: nil, category_id: nil, subtransactions: []) ]
         end
 
         before do
@@ -171,7 +173,7 @@ RSpec.describe YnabTransactionSyncJob, type: :job do
         context 'when subtransaction is deleted' do
           let(:subtransactions) do
             [
-              double('subtransaction', id: 'sub-2', deleted: true)
+              double('subtransaction', id: 'sub-2', deleted: true, payee_id: nil, category_id: nil)
             ]
           end
 
@@ -186,6 +188,37 @@ RSpec.describe YnabTransactionSyncJob, type: :job do
 
             expect(Subtransaction.find_by(ynab_id: 'sub-2')).to be_nil
           end
+        end
+      end
+
+      context 'when there are missing payees or categories' do
+        let(:transactions) do
+          [
+            double('transaction',
+                   id: 'tx-new',
+                   deleted: false,
+                   account_id: 'acc-1',
+                   date: '2023-01-01',
+                   amount: 1000,
+                   memo: 'Missing refs',
+                   cleared: 'cleared',
+                   approved: true,
+                   flag_color: nil,
+                   payee_id: 'pay-missing',
+                   category_id: 'cat-missing',
+                   transfer_account_id: nil,
+                   transfer_transaction_id: nil,
+                   matched_transaction_id: nil,
+                   import_id: nil,
+                   subtransactions: [])
+          ]
+        end
+
+        it 'calls YnabPayeeSyncJob and YnabCategorySyncJob synchronously' do
+          expect(YnabPayeeSyncJob).to receive(:perform_now).with(plan_id)
+          expect(YnabCategorySyncJob).to receive(:perform_now).with(plan_id)
+
+          described_class.new.perform(plan_id)
         end
       end
     end
